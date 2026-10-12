@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "game.h"
 
 /* Initializes the game, ready for the first move */
@@ -109,4 +110,31 @@ int make_move(game_t *game, int row, int col) {
         advance_turn(game);
 
     return GAME_SUCCESS;
+}
+
+void print_board(const game_t *game) {
+    if (game == NULL)
+        return;
+
+    printf("\n    ");
+    for (int c = 0; c < BOARD_SIZE; c++) {
+        printf("%d ", c);
+    }
+    printf("\n  +---------------\n");
+
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        printf("%d | ", r);
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            uint64_t bit = 1ULL << (r * BOARD_SIZE + c);
+            if (game->player_x & bit) {
+                printf("X ");
+            } else if (game->player_o & bit) {
+                printf("O ");
+            } else {
+                printf(". ");
+            }
+        }
+        printf("\n");
+    }
+    printf("Moves made: %d | Turn: %s\n\n", get_moves_made(game), get_current_player(game) == PLAYER_X ? "X" : "O");
 }

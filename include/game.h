@@ -82,5 +82,6 @@ static inline void increment_moves_made(game_t *g) {
 bool board_has_line(uint64_t mask, int length);
 int game_init(game_t *game);
 int make_move(game_t *game, int r, int c);
+void print_board(const game_t *game);
 
 #endif
