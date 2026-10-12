@@ -15,14 +15,12 @@ Currently, I am still building the game engine and logic.
 ```text
 pfg-7x7-ttt/
 ├── include/
-│   ├── board.h
 │   └── game.h
 ├── src/
-│   ├── board.c
 │   ├── game.c
 │   └── main.c
 ├── tests/
-│   ├── board_tests.c
 │   └── game_tests.c
 ├── bin/                 # Created by running `make`
+├── .gitignore
 └── Makefile```
