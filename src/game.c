@@ -1,6 +1,7 @@
 #include "game.h"
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
 int game_init(game_t *game) {
     if (game == NULL)
@@ -16,13 +17,20 @@ static inline bool is_valid_coord(int r, int c) {
     return (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE);
 }
 
-// Helper to check win/loss/draw conditions based on 7x7 variant rules
 static void update_game_state(game_t *game) {
-    // TODO: Integrate full 3-in-a-row (loss) / 4-in-a-row (win) evaluation logic here.
-    // For now, check if the board is full (49 moves on a 7x7 board)
-    if (game->moves_made >= BOARD_SIZE * BOARD_SIZE)
-        game->state = O_WINS; // X loses by default
     game->moves_made++;
+
+    uint64_t current_mask = (game->current_player == PLAYER_X) ? game->board.player_x : game->board.player_o;
+    if (board_has_line(current_mask, 4)) { // 4 in a row
+        game->state = (game->current_player == PLAYER_X) ? X_WINS : O_WINS;
+        return;
+    }
+    if (board_has_line(current_mask, 3)) { // 3 in a row
+        game->state = (game->current_player == PLAYER_X) ? O_WINS : X_WINS;
+        return;
+    }
+    if (game->moves_made >= BOARD_SIZE * BOARD_SIZE) // No more moves left
+        game->state = O_WINS; // X loses by default
 }
 
 // Make a move, advance game state

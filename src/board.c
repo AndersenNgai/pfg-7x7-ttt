@@ -9,6 +9,57 @@ int board_init(board_t *board) {
     return 0;
 }
 
+bool board_has_line(uint64_t mask, int length) {
+    if (length <= 0 || length > BOARD_SIZE)
+        return false;
+
+    // Horizontal
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c <= BOARD_SIZE - length; c++) {
+            uint64_t line_mask = 0;
+            for (int i = 0; i < length; i++)
+                line_mask |= (1ULL << (r * BOARD_SIZE + (c + i)));
+            if ((mask & line_mask) == line_mask)
+                return true;
+        }
+    }
+
+    // Vertical
+    for (int r = 0; r <= BOARD_SIZE - length; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            uint64_t line_mask = 0;
+            for (int i = 0; i < length; i++)
+                line_mask |= (1ULL << ((r + i) * BOARD_SIZE + c));
+            if ((mask & line_mask) == line_mask)
+                return true;
+        }
+    }
+
+    // Diagonal UL to DR
+    for (int r = 0; r <= BOARD_SIZE - length; r++) {
+        for (int c = 0; c <= BOARD_SIZE - length; c++) {
+            uint64_t line_mask = 0;
+            for (int i = 0; i < length; i++)
+                line_mask |= (1ULL << ((r + i) * BOARD_SIZE + (c + i)));
+            if ((mask & line_mask) == line_mask)
+                return true;
+        }
+    }
+
+    // Diagonal DL to UR
+    for (int r = length - 1; r < BOARD_SIZE; r++) {
+        for (int c = 0; c <= BOARD_SIZE - length; c++) {
+            uint64_t line_mask = 0;
+            for (int i = 0; i < length; i++)
+                line_mask |= (1ULL << ((r - i) * BOARD_SIZE + (c + i)));
+            if ((mask & line_mask) == line_mask)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 void print_board(const board_t *board) {
     if (board == NULL)
         return;

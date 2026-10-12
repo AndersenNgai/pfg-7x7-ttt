@@ -2,6 +2,7 @@
 #define BOARD_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define BOARD_SIZE 7
 
@@ -12,5 +13,6 @@ typedef struct {
 
 int board_init(board_t *board);
 void print_board(const board_t *board);
+bool board_has_line(uint64_t mask, int length);
 
 #endif
