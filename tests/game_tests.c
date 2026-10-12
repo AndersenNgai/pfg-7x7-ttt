@@ -13,7 +13,7 @@ Test(game_bitfield, initialization) {
     cr_assert_eq(game.player_o, 0ULL);
     
     cr_assert_eq(get_current_player(&game), PLAYER_X);
-    cr_assert_eq(get_game_state(&game), IN_PROGRESS);
+    cr_assert_eq(get_winner(&game), IN_PROGRESS);
     cr_assert_eq(get_moves_made(&game), 0);
 }
 
@@ -36,11 +36,11 @@ Test(game_bitfield, turn_advancing) {
     cr_assert_eq(game.player_x, 0ULL, "Player X register should return to 0 after second turn toggle");
 }
 
-Test(game_bitfield, game_state_updates) {
+Test(game_bitfield, winner_update) {
     game_t game;
     game_init(&game);
 
-    set_game_state(&game, X_WINS);
+    set_winner(&game, X_WINS);
     
     // X_WINS is 1, shifted by STATE_SHIFT (50) -> (1ULL << 50)
     uint64_t expected_state = ((uint64_t)X_WINS << 50);
@@ -48,7 +48,7 @@ Test(game_bitfield, game_state_updates) {
 
     // Reset and test O_WINS (2)
     game_init(&game);
-    set_game_state(&game, O_WINS);
+    set_winner(&game, O_WINS);
     uint64_t expected_state_o = ((uint64_t)O_WINS << 50);
     cr_assert_eq(game.player_x, expected_state_o, "O_WINS state must reside precisely at bits 50-51");
 }

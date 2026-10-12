@@ -13,7 +13,7 @@
   *
   * From rightmost bit to leftmost bit:
   * Bits 0-48 of player_x are for Player X's pieces
-  * Bit 49 of player_x is the current player (0 = X, 1 = O)
+  * Bit 49 of player_x is the current player (0 = PLAYER_X, 1 = PLAYER_O)
   * Bits 50-51 of player_x are for the game's current state (0 = IN_PROGRESS, 1 = X_WINS, 2 = O_WINS)
   * Bits 52-57 are the number of previous moves made so far
 */
@@ -25,8 +25,8 @@ typedef struct {
 // Bitmasks and extraction
 #define BOARD_MASK         0x1FFFFFFFFFFFFULL // Bits 0-48
 #define TURN_BIT           (1ULL << 49)       // Bit 49
-#define STATE_MASK         3ULL               // 2 bits
-#define STATE_SHIFT        50
+#define WINNER_MASK        3ULL               // 2 bits
+#define WINNER_SHIFT       50
 #define MOVES_MASK         0x3FULL        // 6 bits (enough to store ints 0-49)
 #define MOVES_SHIFT        52
 #define MOVES_INC          (1ULL << MOVES_SHIFT)
@@ -35,10 +35,10 @@ typedef struct {
 #define PLAYER_X 0
 #define PLAYER_O 1
 
-/* Game state */
+/* Winner states */
 #define IN_PROGRESS 0
-#define X_WINS      1
-#define O_WINS      2
+#define X_WINS    1
+#define O_WINS    2
 
 /* Upon making a move */
 #define GAME_SUCCESS       0
@@ -58,8 +58,8 @@ static inline int get_current_player(const game_t *g) {
 }
 
 /* Returns IN_PROGRESS, X_WINS or O_WINS (these are macros) */
-static inline int get_game_state(const game_t *g) {
-    return (int)((g->player_x >> STATE_SHIFT) & STATE_MASK);
+static inline int get_winner(const game_t *g) {
+    return (int)((g->player_x >> WINNER_SHIFT) & WINNER_MASK);
 }
 
 /* Returns the number of previous moves */
@@ -71,8 +71,8 @@ static inline void advance_turn(game_t *g) {
     g->player_x ^= TURN_BIT;
 }
 
-static inline void set_game_state(game_t *g, int state) {
-    g->player_x |= ((uint64_t)state << STATE_SHIFT);
+static inline void set_winner(game_t *g, int state) {
+    g->player_x |= ((uint64_t)state << WINNER_SHIFT);
 }
 
 static inline void increment_moves_made(game_t *g) {
